@@ -1,0 +1,34 @@
+{% extends '%s/base.html' % __theme_path__ %}
+
+{% block meta %}
+    <meta property="x-nav" content="/" />
+{% endblock %}
+
+{% block title %}首页{% endblock %}
+
+{% block main %}
+    <div><h4>最新文章</h4></div>
+{% for a in articles %}
+    <div class="x-article">
+        <div class="x-article-title">
+            <h4><a href="/article/{{ a._id }}">{{ a.name|e }}</a></h4>
+        </div>
+        <div class="x-article-cover-small">
+            <a href="/article/{{ a._id }}"><img src="/files/attachments/{{ a.cover_id }}/s" /></a>
+        </div>
+        <div class="x-article-right">
+            <div class="x-article-info">
+                <a href="/user/{{ a.user_id }}">{{ a.user_name|e }}</a> • <a href="/category/{{ a.category_id }}">{{ a.category_id }}</a> • <span class="x-smartdate" date="{{ a.publish_time }}">...</span> • {{ a.reads }}次阅读
+            </div>
+            <div class="x-article-summary">
+                <p>{{ a.summary }}</p>
+                <p><a href="/article/{{ a._id }}" class="x-readmore">继续阅读 »</a></p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}

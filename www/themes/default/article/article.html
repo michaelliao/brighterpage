@@ -1,0 +1,82 @@
+{% extends '%s/base.html' % __theme_path__ %}
+
+{% block meta %}
+    <meta property="x-nav" content="/category/{{ article.category_id }}" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="http://{{ __request__.host }}/article/{{ article._id }}" />
+    <meta property="og:title" content="{{ article.name|e }}" />
+    <meta property="og:description" content="{{ article.name|e }}" />
+    <meta property="og:image" content="http://{{ __request__.host }}/files/attachments/{{ article.cover_id }}/0" />
+{% endblock %}
+
+{% block title %}{{ article.name|e }}{% endblock %}
+
+{% block beforehead %}
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+    $(function() {
+        $('.x-article-content a[href^="http://"]').attr('target', '_blank');
+        $('.x-article-content a[href^="https://"]').attr('target', '_blank');
+    });
+    </script>
+{% endblock %}
+
+{% block main %}
+
+<div class="x-article">
+    <div class="x-article-title">
+        <h4>{{ article.name|e }}</h4>
+    </div>
+    <div class="x-article-info">
+        <a href="/user/{{ article.user_id }}">{{ article.user_name|e }}</a> • <a href="/category/{{ article.category_id }}">{{ category.name|e }}</a> • <span class="x-smartdate" date="{{ article.publish_time }}">...</span> • {{ article.reads }}次阅读
+    </div>
+    <div class="x-article-cover-large">
+        <img src="/files/attachments/{{ article.cover_id }}/0" />
+    </div>
+    <div class="x-article-content">
+        <p>{{ article.content }}</p>
+    </div>
+    <div class="x-social">
+        <wb:like appkey="2f89Ml"></wb:like>
+    </div>
+    <div class="x-social">
+        <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="《{{ article.name|e }}》{{ article.summary|e }}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ article.cover_id }}/0" picture_search="false"></wb:share-button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+                    <div class="x-sidebar-section">
+                        <h4>热门排行</h4>
+                        <ol class="v-hot-ol">
+
+                        </ol>
+                    </div>
+<!--
+                    <div class="v-sidebar-section">
+                        <h4>热门标签</h4>
+                        <ul class="v-tags">
+                            <li><a href="#">3D打印</a></li>
+                            <li><a href="#">H264</a></li>
+                            <li><a href="#">三星</a></li>
+                            <li><a href="#">Brightcove</a></li>
+                            <li><a href="#">迅雷</a></li>
+                            <li><a href="#">小米盒子</a></li>
+                            <li><a href="#">优酷</a></li>
+                            <li><a href="#">爱奇艺</a></li>
+                            <li><a href="#">YouTube</a></li>
+                            <li><a href="#">在线教育</a></li>
+                            <li><a href="#">手机QQ</a></li>
+                            <li><a href="#">iPhone5</a></li>
+                            <li><a href="#">Vine</a></li>
+                            <li><a href="#">OTT</a></li>
+                            <li><a href="#">阿里云</a></li>
+                        </ul>
+                    </div>
+                    <div class="v-sidebar-section">
+                        <h4>最新评论</h4>
+                    </div>
+-->
+{% endblock %}

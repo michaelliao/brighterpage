@@ -1,0 +1,68 @@
+{% extends '%s/base.html' % __theme_path__ %}
+
+{% block meta %}
+    <meta property="x-nav" content="/wiki/{{ wiki._id }}" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="http://{{ __request__.host }}/wiki/{{ wiki._id }}" />
+    <meta property="og:title" content="{{ wiki.name|e }}" />
+    <meta property="og:description" content="{{ wiki.name|e }}" />
+{% endblock %}
+
+{% block title %}{{ wiki.name|e }}{% endblock %}
+
+{% block beforehead %}
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+$(function() {
+    //{% if page %}
+    $('#{{ page._id }}').prepend('<i class="icon-chevron-right" style="margin:0 2px 0 -16px;"></i>'); //.addClass('x-active');
+    //{% else %}
+    $('#{{ wiki._id }}').addClass('x-active');
+    //{% endif %}
+    $('.x-wiki-content a[href^="http://"]').attr('target', '_blank');
+    $('.x-wiki-content a[href^="https://"]').attr('target', '_blank');
+});
+    </script>
+{% endblock %}
+
+{% macro wiki_tree(nodes) %}
+    <ul>
+    {% for n in nodes %}
+        <li id="{{ n._id }}">
+            <a href="/wiki/{{ wiki._id }}/{{ n._id }}">{{ n.name|e }}</a>
+            {% if n.children %}
+                {{ wiki_tree(n.children) }}
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% block container %}
+        <div class="row">
+            <div class="span3">
+                <div class="x-sidebar-left">
+                    <!-- block sidebar -->
+                    <div class="x-wiki-title">
+                        <h4><a id="{{ wiki._id }}" href="/wiki/{{ wiki._id }}">{{ wiki.name|e }}</a></h4>
+                    </div>
+                    <div class="x-wiki-tree">{{ wiki_tree(tree) }}</div>
+                    <!-- // block sidebar -->
+                </div>
+            </div>
+            <div class="span9">
+                <div id="main">
+                    <!-- block main -->
+                    <h4>{{ name|e }}</h4>
+                    <hr style="border-top-color:#ccc" />
+                    <div class="x-wiki-content">{{ content }}</div>
+                    <div class="x-social">
+                        <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="{{ wiki.name|e }}：{% if page %}{{ name|e }}{% else %}{{ wiki.description|e }}{% endif %}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ wiki.cover_id }}/0" picture_search="false"></wb:share-button>
+                    </div>
+                    <!-- // block main -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

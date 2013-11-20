@@ -1,0 +1,519 @@
+// ----------------------------------------------------------------------------
+// Customized Style
+// ----------------------------------------------------------------------------
+
+@import "../../../../../static/css/bp-less/variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "../../../../../static/css/bp-less/mixins.less";
+
+.x-img-profile {
+  width: 48px;
+  height: 48px;
+  border-width: 0;
+  border-radius: 6px;
+}
+
+.x-main {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.x-sidebar-left {
+  margin-right: 20px;
+  padding-right: 20px;
+  border-right: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.x-sidebar-right {
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.x-sidebar-section {
+  h4 {
+    border-bottom: 1px solid #ccc;
+  }
+}
+
+.x-social {
+  margin: 10px 0;
+}
+
+// article
+
+.x-article {
+  margin-bottom: 36px;
+  .clearfix();
+
+  .x-article-heading {
+    display: block;
+    width: 640px;
+    height: 300px;
+    margin-top: 6px;
+    position: relative;
+    background-size: cover;
+    &:hover {
+      .opacity(80);
+    }
+
+    .x-article-on-cover {
+      .opacity(90);
+      background-color: @grayDark;
+      color: @white;
+      width: 620px;
+      padding: 8px 10px 4px 10px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+  .x-article-cover-large {
+    margin: 10px 0px;
+  }
+
+  .x-article-content {
+    margin: 10px 0px;
+  }
+
+  .x-article-cover-small {
+    width: 120px;
+    float: left;
+    a {
+      img {
+        width: 200px;
+      }
+      &:hover {
+        .opacity(80);
+      }
+    }
+  }
+
+  .x-article-right {
+    margin-left: 140px;
+
+    .x-article-info {
+      color: #999;
+      margin: 0 0 10px 0;
+    }
+  }
+
+  .x-article-no-cover {
+    margin-left: 0 important!;
+  }
+}
+
+a.x-readmore {
+  color: @white;
+  background-color: @linkColor;
+  padding: 4px 8px;
+  &:hover {
+    background-color: @linkColorHover;
+  }
+}
+
+// wiki:
+
+div.x-wiki-title {
+  a.x-active {
+    color: @linkColorHover;
+    font-weight: bold;
+  }
+}
+
+div.x-wiki-tree {
+  ul {
+    list-style-type: none;
+    margin: 0 0 0 20px;
+    li {
+      list-style-type: none;
+      margin: 6px 0 6px 0;
+    }
+    li.x-active {
+      list-style-type: disc;
+      >a {
+        color: @linkColorHover;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+div.x-wiki-content {
+  margin: 10px 0;
+}
+
+// hot list:
+
+ol.x-hot-ol {
+  margin: 0 0 20px 0;
+  li.x-hot-li-video {
+    list-style: none;
+    padding: 6px 0px;
+    div.x-hot-li-video-text {
+      margin-left: 120px;
+    }
+    .clearfix();
+  }
+  li.x-hot-li-article {
+    list-style: none;
+    padding: 0px;
+    a {
+      padding-top: 4px;
+      padding-bottom: 4px;
+      display: block;
+      padding-left: 36px;
+      position: relative;
+      &:hover {
+        color: @white;
+        background-color: @linkColorHover;
+        span {
+          color: @white;
+        }
+      }
+      span {
+        position: absolute;
+        margin: 0;
+        padding: 4px 0;
+        left: 0;
+        top: 0;
+        color: @linkColorHover;
+        display: block;
+        width: 30px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+ul.x-tags {
+  margin: 20px 0;
+  li {
+    display: inline-block;
+    padding: 0px;
+    margin: 0 20px 16px 0;
+    a {
+      color: @white;
+      background-color: @linkColorHover;
+      padding: 4px 8px;
+      .opacity(80);
+      &:hover {
+        .opacity(100);
+      }
+    }
+  }
+}
+
+// Add polaroid with profile
+.img-profile {
+  width: 80px;
+  height: 80px;
+  padding: 4px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.2);
+  .box-shadow(0 1px 3px rgba(0,0,0,.1));
+}
+
+.x-user-dropdown {
+  white-space: nowrap;
+}
+
+// ----------------------------------------------------------------------------
+// go-top
+
+div.go-top {
+    display: none;
+    opacity: 0.9;
+    z-index: 999999;
+    position: fixed;
+    bottom: 113px;
+    left: 90%;
+    margin-left: 40px;
+    border: 1px solid @linkColor;
+    width: 38px;
+    height: 38px;
+    background-color: #fafafa;
+    border-radius: 3px;
+    cursor: pointer;
+
+    div.arrow {
+        position: absolute;
+        left: 10px;
+        top: -1px;
+        width: 0;
+        height: 0;
+        border: 9px solid transparent;
+        border-bottom-color: @linkColor;
+    }
+
+    div.stick {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        width: 8px;
+        height: 14px;
+        display: block;
+        border-radius: 1px;
+        background-color: @linkColor;
+    }
+}
+
+a.x-signin-weibo {
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-image: url("/static/img/weibo.png") !important;
+}
+
+// ----------------------------------------------------------------------------
+// contact
+
+div.v-contact {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #ccc;
+
+  a {
+    display: block;
+    width: 190px;
+    height: 56px;
+    padding: 0px 0px 0px 50px;
+    position: relative;
+    font-size: 16px;
+    line-height: 56px;
+
+    .v-icon-weibo {
+      background-position: 0px 0px;
+    }
+
+    .v-icon-weixin {
+      background-position: -36px 0px;
+    }
+
+    .v-icon-rss {
+      background-position: -72px 0px;
+    }
+
+    .v-icon-mail {
+      background-position: -108px 0px;
+    }
+
+    .v-r-icon {
+      display: block;
+      width: 12px;
+      height: 18px;
+      position: absolute;
+      right: 8px;
+      top: 18px;
+      background-image: url("../img/sprite.png");
+      background-repeat: no-repeat;
+      background-position: -144px 0px;
+    }
+
+    &:hover {
+
+      background-color: darken(#fafafa, 3%);
+
+      .v-icon-weibo {
+        background-position: 0px -36px;
+      }
+
+      .v-icon-weixin {
+        background-position: -36px -36px;
+      }
+
+      .v-icon-rss {
+        background-position: -72px -36px;
+      }
+
+      .v-icon-mail {
+        background-position: -108px -36px;
+      }
+
+      .v-r-icon {
+        background-position: -156px 0px;
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Panel
+// ----------------------------------------------------------------------------
+
+@panelBorderColor: @dropdownDividerTop;
+
+// Panel container
+
+.panel {
+  background-color: @white;
+  margin-bottom: @baseLineHeight;
+  border: 1px solid @panelBorderColor;
+  border-bottom: none;
+  .border-radius(@baseBorderRadius);
+  .panel-heading {
+    border-bottom: 1px solid @panelBorderColor;
+    padding: 8px 15px;
+    p, h3 {
+      margin: 0;
+    }
+  }
+  .dropdown {
+    cursor: pointer;
+    &:hover {
+      background-color: darken(@white, 5%);
+      color: @linkColorHover;
+    }
+  }
+  .dropup {
+    background-color: darken(@white, 5%);
+  }
+  .panel-inner {
+    padding: 9px 15px;
+    border-bottom: 1px solid @panelBorderColor;
+  }
+  .panel-footer {
+    border-bottom: 1px solid @panelBorderColor;
+    background-color: darken(@white, 4%);
+    padding: 8px 15px;
+    p {
+      margin: 0;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// TODO: timeline
+// ----------------------------------------------------------------------------
+
+@timelineWidth: 20px;
+@timelineColor: @grayLighter;
+
+.timeline {
+  //position: relative;
+  margin: 0 @timelineWidth;
+  width: @timelineWidth / 2;
+  height: 0;
+  background-color: @timelineColor;
+  padding-bottom: 100000px;
+  margin-bottom: -100000px;
+
+  .circle {
+    position: absolute;
+    left: -(@timelineWidth / 4);
+    top: 30px - (@timelineWidth / 2);
+    background-color: darken(@timelineColor, 10%);
+    display: block;
+    width: @timelineWidth;
+    height: @timelineWidth;
+    border-radius: @timelineWidth / 2;
+    cursor: pointer;
+    &:hover {
+      background-color: darken(@timelineColor, 15%);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Quote
+// ----------------------------------------------------------------------------
+
+// quote like popover, but with 100% width, only left, right arrow, and no js required:
+
+.quote {
+  position: relative;
+  display: block;
+  background-color: @white;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.2);
+  .border-radius(6px);
+  .box-shadow(0 5px 10px rgba(0,0,0,.2));
+  margin-bottom: @baseFontSize;
+  .quote-inner {
+    padding: 9px 14px;
+  }
+}
+
+.quote.right {
+  margin-left: @popoverArrowOuterWidth;
+}
+
+.quote.left {
+  margin-right: @popoverArrowOuterWidth;
+}
+
+.quote .arrow,
+.quote .arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.quote .arrow {
+  border-width: @popoverArrowOuterWidth;
+}
+.quote .arrow:after {
+  border-width: @popoverArrowWidth;
+  content: "";
+}
+
+.quote {
+  &.right .arrow {
+    top: 30px;
+    left: -@popoverArrowOuterWidth;
+    margin-top: -@popoverArrowOuterWidth;
+    border-left-width: 0;
+    border-right-color: #999; // IE8 fallback
+    border-right-color: @popoverArrowOuterColor;
+    &:after {
+      left: 1px;
+      bottom: -@popoverArrowWidth;
+      border-left-width: 0;
+      border-right-color: @popoverArrowColor;
+    }
+  }
+  &.left .arrow {
+    top: 30px;
+    right: -@popoverArrowOuterWidth;
+    margin-top: -@popoverArrowOuterWidth;
+    border-right-width: 0;
+    border-left-color: #999; // IE8 fallback
+    border-left-color: @popoverArrowOuterColor;
+    &:after {
+      right: 1px;
+      border-right-width: 0;
+      border-left-color: @popoverArrowColor;
+      bottom: -@popoverArrowWidth;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Footer
+// ----------------------------------------------------------------------------
+
+#footer {
+  border-top: 2px solid darken(@linkColor, 10%);
+  background-color: darken(@white, 5%);
+  font-size: 12px;
+  p {
+    line-height: @fontSizeSmall * 2;
+    margin: 0;
+  }
+  div.hr {
+    margin: 6px 0;
+    border-top: 1px solid darken(@grayDarker, 10%);
+    border-bottom: 1px solid darken(@grayLight, 10%);
+  }
+
+  .x-footer-copy {
+    color: @grayDark;
+    border-top: 1px solid #ccc;
+    margin: 0;
+    padding: 8px 0 8px 0;
+  }
+}
