@@ -1,0 +1,12 @@
+
+a.x-btn {
+  padding: 3px;
+  border: solid 1px transparent;
+  margin-right: 2px;
+}
+
+a.x-btn:hover {
+  border: solid 1px #ddd;
+  border-radius: 3px;
+  box-shadow: 2px 2px 2px #ccc;
+}
