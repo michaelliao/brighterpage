@@ -13,7 +13,7 @@ from transwarp.web import view, get, post, ctx, notfound, seeother
 from transwarp import db
 
 from core.apis import api, theme, check, page_select, assert_not_empty, time2timestamp, APIValueError
-from core import uploaders, texts
+from core import uploaders, texts, comments
 
 from models import Articles, Categories
 
@@ -167,7 +167,7 @@ def web_get_article(aid):
         raise notfound
     article.content = texts.md2html(texts.get(article.content_id))
     category = Categories.get_by_id(article.category_id)
-    return dict(article=article, category=category)
+    return dict(article=article, category=category, comments=comments.get_comments(aid))
 
 TIME_FEATURE = 5500000000.0
 
@@ -275,7 +275,21 @@ def api_delete_article(aid):
         raise notfound()
     a.delete()
     uploaders.delete_attachment(a.cover_id)
+    comments.delete_comments(aid)
     return dict(result=True)
+
+@api
+@post('/api/articles/<aid>/comments/create')
+def api_create_article_comment(aid):
+    u = ctx.user
+    if u is None:
+        raise APIPermissionError()
+    i = ctx.request.input(content='')
+    content = assert_not_empty(i.content, 'content')
+    a = Articles.get_by_id(aid)
+    if a is None:
+        raise notfound()
+    return comments.create_comment('article', aid, content)
 
 @view('templates/article/articles_list.html')
 def index():
