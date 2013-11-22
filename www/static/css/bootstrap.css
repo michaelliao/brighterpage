@@ -6107,6 +6107,10 @@ a.badge:focus {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+i.loading {
+  background-image: url("../img/loading.gif") !important;
+  background-position: 0 0 !important;
+}
 .img-profile {
   width: 80px;
   height: 80px;
