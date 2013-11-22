@@ -86,7 +86,7 @@ class Attachments(db.Model):
 class Resources(db.Model):
     '''
     A resource represents a single file.
-
+    
     @@ index idx_ref_id(ref_id)
     '''
 
@@ -101,6 +101,33 @@ class Resources(db.Model):
     mime = db.StringField(updatable=False, ddl='varchar(100)')
     url = db.StringField(updatable=False, ddl='varchar(2000)')
     data = db.BlobField(updatable=False, ddl='mediumblob')
+
+    creation_time = db.FloatField(updatable=False)
+    modified_time = db.FloatField()
+    version = db.VersionField()
+
+    def pre_insert(self):
+        self.creation_time = self.modified_time = time.time()
+
+    def pre_update(self):
+        self.modified_time = time.time()
+        self.version = self.version + 1
+
+class Comments(db.Model):
+    '''
+    Comment object.
+    
+    @@ index idx_ref_id(ref_id)
+    '''
+    _id = db.StringField(primary_key=True, default=db.next_id, ddl='varchar(50)')
+    ref_id = db.StringField(updatable=False, ddl='varchar(50)')
+    ref_type = db.StringField(updatable=False, ddl='varchar(50)')
+
+    user_id = db.StringField(updatable=False, ddl='varchar(50)')
+    user_name = db.StringField(updatable=False, ddl='varchar(50)')
+    user_image_url = db.StringField(updatable=False, ddl='varchar(1000)')
+
+    content = db.StringField(updatable=False, ddl='varchar(1000)')
 
     creation_time = db.FloatField(updatable=False)
     modified_time = db.FloatField()
