@@ -5,6 +5,8 @@
 Upload service.
 '''
 
+import mimetypes
+
 from datetime import datetime
 
 from transwarp.web import ctx, notfound
@@ -43,13 +45,15 @@ def upload_image(name, fcontent):
     ext, w, h = get_image_info(fcontent)
     # generate m, s:
     sizes = []
-    if w > 640:
+    keep_origin = (w <= 640)
+    if not keep_origin:
         sizes.append((640, 0))
-    else:
-        sizes.append((w, 0))
     sizes.append((160, 0))
-    thumbs = create_thumbnails(fcontent, *sizes)
-    return _store_files('image/inline', name, thumbs)
+    pics = create_thumbnails(fcontent, *sizes)
+    if keep_origin:
+        mime = mimetypes.types_map.get(ext, 'application/octet-stream')
+        pics.insert(0, (mime, 'width=%s&height=%s' % (w, h), fcontent))
+    return _store_files('image/inline', name, pics)
 
 def _store_files(kind, name, files):
     '''
