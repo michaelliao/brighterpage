@@ -25,6 +25,18 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+i.x-loading {
+  background-image: url("../img/loading.gif") !important;
+  background-position: 0 0 !important;
+}
+img.x-user-image-small {
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  width: 50px;
+  height: 50px;
+  border: none;
+}
 .x-img-profile {
   width: 48px;
   height: 48px;
@@ -123,6 +135,99 @@ a.x-readmore {
 }
 a.x-readmore:hover {
   background-color: #d14836;
+}
+.x-comment-box {
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin: 36px 0;
+  padding: 12px;
+  background-color: #f5f5f5;
+  *zoom: 1;
+}
+.x-comment-box div.x-comment-signin {
+  padding: 10px 0 0 10px;
+}
+.x-comment-box div.x-comment-signin p {
+  font-size: 14px;
+  line-height: 34px;
+}
+.x-comment-box div.x-comment-user-img {
+  width: 50px;
+  float: left;
+}
+.x-comment-box div.x-comment-input-area {
+  margin-left: 70px;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-prompt {
+  margin: 0 0 6px 0;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-prompt span.x-comment-error {
+  margin-right: 18px;
+  color: #9d261d;
+  float: right;
+  *zoom: 1;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-prompt span.x-comment-error:before,
+.x-comment-box div.x-comment-input-area div.x-comment-prompt span.x-comment-error:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-prompt span.x-comment-error:after {
+  clear: both;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-input textarea {
+  width: 95%;
+  resize: none;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-submit span {
+  color: #666;
+  font-size: 12px;
+}
+.x-comment-box div.x-comment-input-area div.x-comment-submit button {
+  float: right;
+  margin-right: 24px;
+}
+.x-comment-box:before,
+.x-comment-box:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.x-comment-box:after {
+  clear: both;
+}
+div.x-comment-li {
+  margin: 36px 0;
+  padding: 12px;
+  *zoom: 1;
+}
+div.x-comment-li div.x-comment-img {
+  width: 50px;
+  float: left;
+}
+div.x-comment-li div.x-comment-main {
+  margin-left: 70px;
+}
+div.x-comment-li div.x-comment-main div.x-comment-prompt {
+  color: #666;
+}
+div.x-comment-li div.x-comment-main div.x-comment-prompt a.x-delete-comment {
+  color: #d14836 !important;
+}
+div.x-comment-li div.x-comment-main div.x-comment-content {
+  margin: 6px 0;
+}
+div.x-comment-li:before,
+div.x-comment-li:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+div.x-comment-li:after {
+  clear: both;
 }
 div.x-wiki-title a.x-active {
   color: #d14836;
