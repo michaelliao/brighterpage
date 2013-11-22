@@ -1,6 +1,8 @@
 // customized:
 
 $(function() {
+    // set user image:
+    $('img.x-user-image').attr('src', g_user_image);
 
     // active nav bar:
     var xnav = $('meta[property="x-nav"]').attr('content');
@@ -41,30 +43,9 @@ $(function() {
     });
 
     // smart date:
-    var today = new Date(g_time);
-    var this_year = today.getFullYear();
-    var now = parseInt(today.getTime() / 1000);
     $('.x-smartdate').each(function() {
-        var s = '1分钟前';
         var f = parseInt($(this).attr('date'));
-        var t = now - f;
-        if (t > 604800) {
-            // 1 week ago:
-            var that = new Date(f * 1000);
-            s = that.getFullYear()==this_year ? (that.getMonth() + 1) + '月' + that.getDate() + '日' : that.getFullYear() + '年' + (that.getMonth() + 1) + '月' + that.getDate() + '日';
-        }
-        else if (t >= 86400) {
-            // 1-6 days ago:
-            s = parseInt(t / 86400) + '天前';
-        }
-        else if (t >= 3600) {
-            // 1-23 hours ago:
-            s = parseInt(t / 3600) + '小时前';
-        }
-        else if (t >= 60) {
-            s = parseInt(t / 60) + '分钟前';
-        }
-        $(this).text(s);
+        $(this).text(to_smart_date(f));
     });
 
     // search query:
@@ -77,6 +58,46 @@ $(function() {
     });
     // END
 });
+
+function to_smart_date(f) {
+    var today = new Date(g_time);
+    var this_year = today.getFullYear();
+    var now = parseInt(today.getTime() / 1000);
+
+    var s = '1分钟前';
+    var t = now - parseInt(f);
+    if (t > 604800) {
+        // 1 week ago:
+        var that = new Date(f * 1000);
+        s = '';
+        if (that.getFullYear()!=this_year) {
+            s = s + that.getFullYear() + '年';
+        }
+        s = s + (that.getMonth() + 1) + '月' + that.getDate() + '日 ' + that.getHours() + ':';
+        var m = that.getMinutes();
+        if (m < 10) {
+            s = s + '0';
+        }
+        s = s + m;
+    }
+    else if (t >= 86400) {
+        // 1-6 days ago:
+        s = parseInt(t / 86400) + '天前';
+    }
+    else if (t >= 3600) {
+        // 1-23 hours ago:
+        s = parseInt(t / 3600) + '小时前';
+    }
+    else if (t >= 60) {
+        s = parseInt(t / 60) + '分钟前';
+    }
+    return s;
+}
+
+function search(keyword) {
+    location.assign('http://www.baidu.com/s?ie=utf-8&wd=' + encodeURIComponent(keyword) + '+site%3A' + location.hostname);
+    return false;
+}
 
 function is_desktop() {
     var ua = navigator.userAgent.toLowerCase();
@@ -94,7 +115,128 @@ function auth_from(provider) {
 }
 
 function onauthcallback(u) {
+    console.log(u);
     $('span.x-user-name').text(u.name);
+    $('img.x-user-image').attr('src', u.image_url);
     $('.x-auth-signed').show();
     $('.x-auth-not-signed').hide();
 }
+
+// create comment by ajax:
+
+function _set_comment_error($form, s) {
+    $form.find('span.x-comment-error').text(s);
+}
+
+function _set_comment_posting($btn, posting) {
+    var $i = $btn.find('i')
+    if (posting) {
+        $btn.attr('disabled', 'disabled');
+        $i.addClass('x-loading');
+    }
+    else {
+        $btn.removeAttr('disabled');
+        $i.removeClass('x-loading');
+    }
+}
+
+var _comment_template = '<!-- comment template -->' +
+    '<div class="x-comment-li">' +
+    '    <div class="x-comment-img">' +
+    '        <img class="x-user-image-small" />' +
+    '    </div>' +
+    '    <div class="x-comment-main">' +
+    '        <div class="x-comment-prompt">' +
+    '            <span class="x-comment-username"></span> <span class="x-comment-date"></span>：' +
+    '        </div>' +
+    '        <div class="x-comment-content"></div>' +
+    '        <div class="x-comment-prompt">' +
+    '            <span>' +
+    '                <a href="#0" onclick="reply_comment(this)">回复</a>' +
+    '                <a href="javascript:delete_comment(\'$_ID\')" class="x-delete-comment" style="display:none">删除</a>' +
+    '            </span>' +
+    '        </div>' +
+    '    </div>' +
+    '</div>';
+
+function reply_comment(a) {
+    var p = $(a);
+    while (! p.hasClass('x-comment-li')) {
+        if (p.get(0)===document) {
+            return;
+        }
+        p = p.parent();
+    }
+    var u = '@' + p.find('.x-comment-username').text();
+    var $textarea = $('form.x-comment-form').find('textarea[name=content]');
+    $textarea.val(u + '\n' + $textarea.val());
+    $('html, body').animate({scrollTop: $('form.x-comment-form').position().top - 20});
+    $textarea.focus();
+    $textarea.get(0).setSelectionRange(u.length + 1, u.length + 1);
+}
+
+function _format_lines(s) {
+    var ss = s.split('\n');
+    var L = [];
+    $.each(ss, function(index, value) {
+        var l = $.trim(value);
+        if (l.length>0) {
+            L.push('<p>' + $('<p/>').text(l).html() + '</p>');
+        }
+    });
+    return L.join('');
+}
+
+function _add_comment(c) {
+    var $dom = $(_comment_template.replace('$_ID', c._id));
+    $dom.find('span.x-comment-username').text(c.user_name);
+    $dom.find('span.x-comment-date').text(c.creation_time);
+    $dom.find('div.x-comment-img img').attr('src', c.user_image_url);
+    $dom.find('div.x-comment-content').html(_format_lines(c.content));
+    return $dom;
+}
+
+function create_comment(form) {
+    try {
+        var $form = $(form);
+        var $btn = $form.find('button[type=submit]');
+        var $textarea = $form.find('textarea[name=content]');
+        var s = $textarea.val();
+        if ($.trim(s).length==0) {
+            _set_comment_error($form, '请输入评论内容！');
+            return false;
+        }
+
+        _set_comment_error($form, '');
+        _set_comment_posting($btn, true);
+
+        $.postJSON($form.attr('action'), $form.serialize(), function(result) {
+            $textarea.val('');
+            result.creation_time = '1分钟前';
+            var $dom = _add_comment(result);
+            $dom.css('display', 'none');
+            $('div.x-comments-list').prepend($dom);
+            $dom.slideDown();
+        }, function(e) {
+            _set_comment_error($form, e.message || e.error);
+        }, function() {
+            _set_comment_posting($btn, false);
+        });
+    }
+    catch (e) {}
+    return false;
+}
+
+function delete_comment(cid) {
+    if (confirm('delete this comment?')) {
+        $.postJSON('/api/comments/' + cid + '/delete', '', function(result) {
+            location.reload();
+        }, function(e) {
+            alert('Error: ' + (e.message || e.error));
+        });
+    }
+}
+
+
+
+

@@ -60,6 +60,17 @@ $(function() {
                     <div class="x-social">
                         <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="{{ wiki.name|e }}：{% if page %}{{ name|e }}{% else %}{{ wiki.description|e }}{% endif %}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ wiki.cover_id }}/0" picture_search="false"></wb:share-button>
                     </div>
+
+                    <h4>评论……</h4>
+
+{% if page %}
+{% set comment_url = '/api/wikis/pages/%s/comments/create' % page._id %}
+{% else %}
+{% set comment_url = '/api/wikis/%s/comments/create' % wiki._id %}
+{% endif %}
+
+{{ make_comments(comment_url, comments) }}
+
                     <!-- // block main -->
                 </div>
             </div>

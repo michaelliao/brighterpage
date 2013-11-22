@@ -37,46 +37,31 @@
     <div class="x-article-content">
         <p>{{ article.content }}</p>
     </div>
-    <div class="x-social">
-        <wb:like appkey="2f89Ml"></wb:like>
-    </div>
-    <div class="x-social">
-        <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="《{{ article.name|e }}》{{ article.summary|e }}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ article.cover_id }}/0" picture_search="false"></wb:share-button>
-    </div>
 </div>
+
+<h4>评论……</h4>
+
+{{ make_comments('/api/articles/%s/comments/create' % article._id, comments) }}
 
 {% endblock %}
 
 {% block sidebar %}
-                    <div class="x-sidebar-section">
-                        <h4>热门排行</h4>
-                        <ol class="v-hot-ol">
-
-                        </ol>
-                    </div>
-<!--
-                    <div class="v-sidebar-section">
-                        <h4>热门标签</h4>
-                        <ul class="v-tags">
-                            <li><a href="#">3D打印</a></li>
-                            <li><a href="#">H264</a></li>
-                            <li><a href="#">三星</a></li>
-                            <li><a href="#">Brightcove</a></li>
-                            <li><a href="#">迅雷</a></li>
-                            <li><a href="#">小米盒子</a></li>
-                            <li><a href="#">优酷</a></li>
-                            <li><a href="#">爱奇艺</a></li>
-                            <li><a href="#">YouTube</a></li>
-                            <li><a href="#">在线教育</a></li>
-                            <li><a href="#">手机QQ</a></li>
-                            <li><a href="#">iPhone5</a></li>
-                            <li><a href="#">Vine</a></li>
-                            <li><a href="#">OTT</a></li>
-                            <li><a href="#">阿里云</a></li>
-                        </ul>
-                    </div>
-                    <div class="v-sidebar-section">
-                        <h4>最新评论</h4>
-                    </div>
--->
+<div data-spy="saffix">
+    <div class="x-sidebar-section">
+        <h4>喜欢这篇文章？</h4>
+        <div style="height:66px">
+            <wb:like appkey="2f89Ml"></wb:like>
+        </div>
+    </div>
+    <div class="x-sidebar-section">
+        <h4>分享给朋友</h4>
+        <div style="height:66px">
+            <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="《{{ article.name|e }}》{{ article.summary|e }}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ article.cover_id }}/0" picture_search="false"></wb:share-button>
+        </div>
+    </div>
+    <div class="x-sidebar-section">
+        <h4>关于作者</h4>
+        <iframe width="278" height="330" class="share_self" frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=zh_cn&width=278&height=330&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=1&isFans=1&uid=1658384301&verifier=078cedea&colors=0088cc,ffffff,333333,0082cb,d14836&dpc=1&rnd={{ __time__ }}"></iframe>
+    </div>
+</div>
 {% endblock %}
