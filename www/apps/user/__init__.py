@@ -139,9 +139,9 @@ def auth_callback_weibo():
     jscallback = ctx.request.get('jscallback', '')
     if jscallback:
         ctx.response.write(r'''<html><body><script>
-                window.opener.%s({'id': '%s', 'name': '%s'});
+                window.opener.%s({'id': '%s', 'name': '%s', 'image_url': '%s'});
                 self.close();
-            </script></body></html>''' % (jscallback, user._id, user.name.replace('\'', '\\\'').replace('\n', '').replace('\r', '')));
+            </script></body></html>''' % (jscallback, user._id, user.name.replace('\'', '\\\'').replace('\n', '').replace('\r', ''), user.image_url));
         return
     raise seeother('/')
 

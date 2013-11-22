@@ -11,7 +11,7 @@ from transwarp.web import get, post, ctx, view, seeother, notfound, Dict
 from transwarp import db
 
 from core.apis import api, check, theme, assert_not_empty, APIValueError
-from core import texts
+from core import texts, comments
 
 from models import Wikis, WikiPages
 
@@ -30,7 +30,7 @@ def web_wiki(wid):
     wiki = _get_wiki(wid)
     tree = _get_wikipages(wiki)
     content = texts.md2html(texts.get(wiki.content_id))
-    return dict(wiki=wiki, page=None, tree=tree, name=wiki.name, content=content)
+    return dict(wiki=wiki, page=None, tree=tree, name=wiki.name, content=content, comments=comments.get_comments(wid))
 
 @get('/wiki/<wid>/<pid>')
 @theme('wiki/wiki.html')
@@ -41,7 +41,7 @@ def web_wikipage(wid, pid):
     wiki = _get_wiki(wid)
     tree = _get_wikipages(wiki)
     content = texts.md2html(texts.get(page.content_id))
-    return dict(wiki=wiki, page=page, tree=tree, name=page.name, content=content)
+    return dict(wiki=wiki, page=page, tree=tree, name=page.name, content=content, comments=comments.get_comments(pid))
 
 # api
 
@@ -108,7 +108,19 @@ def api_wikis_delete(wid):
     if count > 0:
         raise APIValueError('id', 'cannot delete non-empty wiki.')
     wiki.delete()
+    comments.delete_comments(wid)
     return dict(result=True)
+
+@api
+@post('/api/wikis/<wid>/comments/create')
+def api_create_wiki_comment(wid):
+    u = ctx.user
+    if u is None:
+        raise APIPermissionError()
+    i = ctx.request.input(content='')
+    content = assert_not_empty(i.content, 'content')
+    wiki = _get_wiki(wid)
+    return comments.create_comment('wiki', wid, content)
 
 @api
 @get('/api/wikis/<wid>/pages')
@@ -168,7 +180,19 @@ def api_wikis_pages_delete(wpid):
     if WikiPages.count('where wiki_id=? and parent_id=?', page.wiki_id, page._id) > 0:
         raise APIPermissionError('cannot delete non empty page.')
     page.delete()
+    comments.delete_comments(wpid)
     return dict(result=True)
+
+@api
+@post('/api/wikis/pages/<wpid>/comments/create')
+def api_create_wikipage_comment(wpid):
+    u = ctx.user
+    if u is None:
+        raise APIPermissionError()
+    i = ctx.request.input(content='')
+    content = assert_not_empty(i.content, 'content')
+    wikipage = _get_wikipage(wpid)
+    return comments.create_comment('wikipage', wpid, content)
 
 @api
 @check()
