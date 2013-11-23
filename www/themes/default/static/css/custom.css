@@ -62,9 +62,6 @@ img.x-user-image-small {
 .x-sidebar-section h4 {
   border-bottom: 1px solid #ccc;
 }
-.x-social {
-  margin: 10px 0;
-}
 .x-article {
   margin-bottom: 36px;
   *zoom: 1;
@@ -232,6 +229,9 @@ div.x-comment-li:after {
 div.x-wiki-title a.x-active {
   color: #d14836;
   font-weight: bold;
+}
+div.x-wiki-tree {
+  margin-bottom: 24px;
 }
 div.x-wiki-tree ul {
   list-style-type: none;
