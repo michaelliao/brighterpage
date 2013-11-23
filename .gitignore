@@ -42,4 +42,5 @@ Thumbs.db
 www/static/upload/*
 
 transwarp
+conf_prod.py
 
