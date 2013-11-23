@@ -139,3 +139,21 @@ class Comments(db.Model):
     def pre_update(self):
         self.modified_time = time.time()
         self.version = self.version + 1
+
+class SNSTokens(db.Model):
+    '''
+    SNS Token object.
+    '''
+
+    _id = db.StringField(primary_key=True, default=db.next_id, ddl='varchar(50)')
+
+    auth_provider = db.StringField(updatable=False, ddl='varchar(50)')
+    auth_name = db.StringField(updatable=False, ddl='varchar(50)')
+    auth_token = db.StringField(updatable=False, ddl='varchar(200)')
+
+    creation_time = db.FloatField(updatable=False)
+    expires_time = db.FloatField(updatable=False)
+    version = db.VersionField()
+
+    def pre_insert(self):
+        self.creation_time = time.time()
