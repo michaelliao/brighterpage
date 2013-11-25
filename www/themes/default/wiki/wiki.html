@@ -4,7 +4,7 @@
     <meta property="x-nav" content="/wiki/{{ wiki._id }}" />
 
     <meta property="og:type" content="article" />
-    <meta property="og:url" content="http://{{ __request__.host }}/wiki/{{ wiki._id }}" />
+    <meta property="og:url" content="http://{{ __request__.host }}/wiki/{{ wiki._id }}{% if page %}/{{ page._id }}{% endif %}" />
     <meta property="og:title" content="{{ wiki.name|e }}" />
     <meta property="og:description" content="{{ wiki.name|e }}" />
 {% endblock %}
@@ -48,6 +48,10 @@ $(function() {
                         <h4><a id="{{ wiki._id }}" href="/wiki/{{ wiki._id }}">{{ wiki.name|e }}</a></h4>
                     </div>
                     <div class="x-wiki-tree">{{ wiki_tree(tree) }}</div>
+                    <div class="x-sidebar-section">
+                        <h4>关于作者</h4>
+                        <iframe width="215" height="400" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=215&height=400&fansRow=3&ptype=1&speed=0&skin=5&isTitle=0&noborder=0&isWeibo=0&isFans=1&uid=1658384301&verifier=078cedea&dpc=1"></iframe>
+                    </div>
                     <!-- // block sidebar -->
                 </div>
             </div>
@@ -57,7 +61,16 @@ $(function() {
                     <h4>{{ name|e }}</h4>
                     <hr style="border-top-color:#ccc" />
                     <div class="x-wiki-content">{{ content }}</div>
-                    <div class="x-social">
+
+                    <hr style="border-top-color:#ccc" />
+
+                    <h4>喜欢这篇文章？</h4>
+                    <div style="height:66px">
+                        <wb:like appkey="2f89Ml"></wb:like>
+                    </div>
+
+                    <h4>分享给朋友</h4>
+                    <div style="height:66px">
                         <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="{{ wiki.name|e }}：{% if page %}{{ name|e }}{% else %}{{ wiki.description|e }}{% endif %}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ wiki.cover_id }}/0" picture_search="false"></wb:share-button>
                     </div>
 
