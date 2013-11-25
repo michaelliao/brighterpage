@@ -1,0 +1,81 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+All Users
+{% endblock %}
+
+{% block head %}
+<script>
+
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            var $btn = $(this);
+            var prompt = $btn.attr('prompt');
+            var rel = $btn.attr('rel');
+
+            show_confirm('Deletion Confirmation', 'Are you sure you want to delete "' + prompt + '"?', function(btn, fn_hide) {
+                $.postJSON('/api/users/' + rel + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message || err.error, err.data);
+                });
+            });
+        });
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li class="active">All Users ({{ page.item_count }})</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <div class="btn-toolbar" style="text-align:right;">
+        <a href="javascript:refresh()" class="btn btn-info"><i class="icon-refresh icon-white"></i> Refresh</a>
+        <a href="create_user" class="btn btn-primary"><i class="icon-plus icon-white"></i> Add New User</a>
+    </div>
+</div>
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th width="20%">Name</th>
+                <th width="40%">Email</th>
+                <th width="10%">OAuth</th>
+                <th width="15%">Creation Date</th>
+                <th width="15%">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+{% for u in users %}
+            <tr>
+                <td>{{ u.name|e }}</td>
+                <td>
+                    {{ u.email }}
+                    {% if not u.email.endswith('@tmp') %}
+                    {% endif %}
+                </td>
+                <td>?</td>
+                <td>{{ u.creation_time|dt }}</td>
+                <td>
+                    <a data-toggle="tooltip" title="Edit User" href="edit_user?_id={{ u._id }}" class="x-btn"><i class="icon-edit"></i></a>
+                    <a data-toggle="tooltip" title="Delete User" rel="{{ u._id }}" href="javascript:void(0)" class="x-btn x-btn-delete" prompt="{{ u.name|e }}"><i class="icon-trash"></i></a>
+                    <a data-toggle="tooltip" title="Lock User" href="javascript:lock_user(this)" rel="{{ u._id }}" class="x-btn"><i class="icon-ban-circle"></i></a>
+                </td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+    {{ pagination(page, '?page=') }}
+</div>
+
+{% endblock%}
