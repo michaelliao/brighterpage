@@ -1,0 +1,69 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+All Comments
+{% endblock %}
+
+{% block head %}
+<script>
+
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            var $btn = $(this);
+            var prompt = $btn.attr('prompt');
+            var rel = $btn.attr('rel');
+
+            show_confirm('Deletion Confirmation', 'Are you sure you want to delete "' + prompt + '"?', function(btn, fn_hide) {
+                $.postJSON('/api/comments/' + rel + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message || err.error, err.data);
+                });
+            });
+        });
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li class="active">All Comments ({{ page.item_count }})</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th width="10%">User</th>
+                <th width="15%">Type</th>
+                <th width="60%">Comment</th>
+                <th width="15%">Creation Date</th>
+            </tr>
+        </thead>
+        <tbody>
+{% for c in comments %}
+            <tr>
+                <td rowspan="2"><img src="{{ c.user_image_url }}" style="width:50px" /></td>
+                <td rowspan="2"><a href="/{{ c.ref_type }}/{{ c.ref_id }}" target="_blank">{{ c.ref_type }}</a></td>
+                <td rowspan="2">{{ c.content|e }}</td>
+                <td>{{ c.creation_time|dt }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <a data-toggle="tooltip" title="Delete Comment" rel="{{ c._id }}" href="javascript:void(0)" class="x-btn x-btn-delete" prompt="{{ c.content|e }}"><i class="icon-trash"></i></a>
+                </td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+    {{ pagination(page, '?page=') }}
+</div>
+
+{% endblock%}
