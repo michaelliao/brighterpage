@@ -20,6 +20,7 @@ class Wikis(db.Model):
     name = db.StringField(ddl='varchar(50)')
     description = db.StringField(ddl='varchar(100)')
 
+    cover_id = db.StringField(ddl='varchar(50)')
     content_id = db.StringField(ddl='varchar(50)')
 
     creation_time = db.FloatField(updatable=False)

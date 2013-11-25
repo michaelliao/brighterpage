@@ -1,0 +1,79 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+All Wikis
+{% endblock %}
+
+{% block head %}
+<script>
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            $btn = $(this);
+            var prompt = $btn.attr('prompt');
+            var rel = $btn.attr('rel');
+
+            show_confirm('Confirm Deletion', 'Delete wiki "' + prompt + '"?', function(btn, fn_hide) {
+                $.postJSON('/api/wikis/' + rel + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message || err.error, err.data);
+                });
+            });
+        });
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li class="active">All Wikis ({{ wikis.__len__() }})</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <div class="btn-toolbar" style="text-align:right;">
+        <a href="create_wiki" class="btn btn-primary"><i class="icon-plus icon-white"></i> Create New Wiki</a>
+    </div>
+</div>
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th width="20%">Cover</th>
+                <th width="55%">Name &amp; Description</th>
+                <th width="15%">Creation Date</th>
+                <th width="10%">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+{% for w in wikis %}
+            <tr>
+                <td><img src="/files/attachments/{{ w.cover_id }}/s" /></td>
+                <td>
+                    <p><a href="/wiki/{{ w._id }}" target="_blank">{{ w.name|e }}</a></p>
+                    <p>{{ w.description|e }}</p>
+                </td>
+                <td>{{ w.creation_time|dt }}</td>
+                <td>
+                    <a href="list_wiki?_id={{ w._id }}" data-toggle="tooltip" title="Show this wiki" class="x-btn"><i class="icon-list"></i></a>
+                    <a data-toggle="tooltip" title="Delete this wiki" rel="{{ w._id }}" href="javascript:void(0)" class="x-btn x-btn-delete" prompt="{{ w.name|e }}"><i class="icon-trash"></i></a>
+                </td>
+            </tr>
+{% else %}
+            <tr>
+                <td colspan="4">
+                    No wikis defined. Please create a new wiki.
+                </td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

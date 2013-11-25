@@ -11,7 +11,7 @@ from transwarp.web import get, post, ctx, view, seeother, notfound, Dict
 from transwarp import db
 
 from core.apis import api, check, theme, assert_not_empty, APIValueError
-from core import texts, comments
+from core import texts, comments, uploaders
 
 from models import Wikis, WikiPages
 
@@ -32,6 +32,13 @@ def web_wiki(wid):
     content = texts.md2html(texts.get(wiki.content_id))
     return dict(wiki=wiki, page=None, tree=tree, name=wiki.name, content=content, comments=comments.get_comments(wid))
 
+@get('/wikipage/<pid>')
+def redirect_wikipage(pid):
+    p = _get_wikipage(pid)
+    if p is None:
+        raise notfound()
+    raise seeother('/wiki/%s/%s' % (p.wiki_id, pid))
+
 @get('/wiki/<wid>/<pid>')
 @theme('wiki/wiki.html')
 def web_wikipage(wid, pid):
@@ -50,13 +57,18 @@ def web_wikipage(wid, pid):
 @post('/api/wikis/create')
 def api_create_wiki():
     ' create a new wiki. '
-    i = ctx.request.input(name='', description='', content='')
+    i = ctx.request.input(name='', description='', content='', cover=None)
+    if not i.cover:
+        raise APIValueError('cover', 'Cover cannot be empty.')
     name = assert_not_empty(i.name, 'name')
     description = i.description.strip()
     content = assert_not_empty(i.content, 'content')
+    f = i.cover
+    atta = uploaders.upload_cover(name, f.file.read())
     wiki_id = db.next_str()
     wiki = Wikis( \
         _id=wiki_id, \
+        cover_id = atta._id, \
         name=name, \
         description=description, \
         content_id=texts.set(wiki_id, content)).insert()
@@ -92,10 +104,23 @@ def api_wikis_update(wid):
         update = True
     if 'content' in i:
         content = assert_not_empty(i.content, 'content')
-        wiki.content_id = texts.set(wid, content)
+        wiki.content = content
         update = True
+    old_cover_id = ''
+    if 'cover' in i:
+        f = i.cover
+        if f:
+            # update cover:
+            old_cover_id = wiki.cover_id
+            atta = uploaders.upload_cover(wiki.name, f.file.read())
+            wiki.cover_id = atta._id
+            update = True
+    if hasattr(wiki, 'content'):
+        wiki.content_id = texts.set(wiki._id, wiki.content)
     if update:
         wiki.update()
+    if old_cover_id:
+        uploaders.delete_attachment(old_cover_id)
     return dict(result=True)
 
 @api
@@ -109,6 +134,7 @@ def api_wikis_delete(wid):
         raise APIValueError('id', 'cannot delete non-empty wiki.')
     wiki.delete()
     comments.delete_comments(wid)
+    uploaders.delete_attachment(wiki.cover_id)
     return dict(result=True)
 
 @api
@@ -247,7 +273,7 @@ def api_wikis_pages_move(wpid, target_id):
 
 @view('templates/wiki/wiki_form.html')
 def create_wiki():
-    return dict(form_action='/api/wikis/create')
+    return dict(form_title='Create Wiki', form_action='/api/wikis/create', redirect='index', name='', description='', content='')
 
 @view('templates/wiki/wikis_list.html')
 def index():
@@ -255,36 +281,36 @@ def index():
     return dict(wikis=wikis)
 
 @view('templates/wiki/wikipages.html')
-def edit_wiki():
+def list_wiki():
     i = ctx.request.input()
     wiki = _get_wiki(i._id)
     return dict(wiki=wiki)
 
+@view('templates/wiki/wiki_form.html')
+def edit_wiki():
+    i = ctx.request.input(_id='')
+    wiki = _get_full_wiki(i._id)
+    return dict( \
+        redirect='list_wiki?_id=%s' % i._id, \
+        cover_id=wiki.cover_id, \
+        name=wiki.name, \
+        description=wiki.description, \
+        content=wiki.content, \
+        wiki=wiki, \
+        form_title='Edit Wiki Page', \
+        form_action = '/api/wikis/%s/update' % wiki._id)
+
 @view('templates/wiki/wikipage_form.html')
 def edit_wiki_page():
-    i = ctx.request.input(type='', _id='')
-    if i.type=='wiki':
-        wiki = _get_full_wiki(i._id)
-        return dict( \
-            name=wiki.name, \
-            description=wiki.description, \
-            has_description=True, \
-            content=wiki.content, \
-            wiki=wiki, \
-            form_title='Edit Wiki Page', \
-            form_action = '/api/wikis/%s/update' % wiki._id)
-    elif i.type=='wikipage':
-        wikipage = _get_full_wikipage(i._id)
-        wiki = _get_wiki(wikipage.wiki_id)
-        return dict( \
-            name=wikipage.name, \
-            content=wikipage.content, \
-            has_description=False, \
-            wiki=wiki, \
-            form_title='Edit Wiki Page', \
-            form_action = '/api/wikis/pages/%s/update' % wikipage._id)
-    else:
-        raise APIValueError('type', 'Invalid type.')
+    i = ctx.request.input(_id='')
+    wikipage = _get_full_wikipage(i._id)
+    wiki = _get_wiki(wikipage.wiki_id)
+    return dict( \
+        name=wikipage.name, \
+        content=wikipage.content, \
+        wiki=wiki, \
+        form_title='Edit Wiki Page', \
+        form_action = '/api/wikis/pages/%s/update' % wikipage._id)
 
 # private functions:
 
