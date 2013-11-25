@@ -1,0 +1,78 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+{{ form_title }}
+{% endblock %}
+
+{% block head %}
+
+<script>
+function ajax_post(form) {
+    show_error(null);
+    show_loading(true);
+    $.postJSON($(form).attr('action'), $(form).serialize(), function(result) {
+        location.assign('index');
+    }, function(e) {
+        show_loading(false);
+        show_error(e.message || e.error, e.data);
+    });
+    return false;
+}
+
+$(function() {
+    var selectMenu = $('select[name=menus]');
+    selectMenu.val('{{ url }}');
+    selectMenu.change(function() {
+        var opt = $('select[name=menus] option:selected');
+        $('input[name=name]').val(opt.text());
+        $('input[name=url]').val(opt.attr('value'));
+    });
+});
+
+</script>
+
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li><a href="/manage/navigation/">All Navigations</a> <span class="divider">/</span></li>
+        <li class="active">{{ form_title }}</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <form id="x-form" action="{{ form_action }}" method="post" class="form-horizontal" onsubmit="return ajax_post(this)">
+        <fieldset>
+            <div class="alert alert-error hide"></div>
+            <div class="field-menus control-group">
+                <label class="control-label">Select Menu:</label>
+                <div class="controls">
+                    <select name="menus" class="input-xlarge">
+{% for m in menus %}
+                        <option value="{{ m.url }}">{{ m.name|e }}</option>
+{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="field-description control-group">
+                <label class="control-label">Name:</label>
+                <div class="controls">
+                    <input name="name" type="text" value="{{ name|e }}" class="input-xlarge" />
+                </div>
+            </div>
+            <div class="field-description control-group">
+                <label class="control-label">URL:</label>
+                <div class="controls">
+                    <input name="url" type="text" value="{{ url }}" class="input-xlarge" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Save</button>
+                <button type="button" class="btn" onclick="location.assign('index')"><i class="icon-remove"></i> Cancel</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+{% endblock %}

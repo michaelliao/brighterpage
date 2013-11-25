@@ -1,0 +1,118 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+Navigations
+{% endblock %}
+
+{% block head %}
+<script>
+
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            var $btn = $(this);
+            var prompt = $btn.attr('prompt');
+            var rel = $btn.attr('rel');
+
+            show_confirm('Deletion Confirmation', '<p>Are you sure you want to delete "' + prompt + '"?</p><p>Note: only the navigation link will be deleted.</p>', function(btn, fn_hide) {
+                $.postJSON('/api/navigations/' + rel + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message || err.error, err.data);
+                });
+            });
+        });
+    });
+});
+
+function ajax_post(form) {
+    show_error(null);
+    show_loading(true);
+    $.postJSON($(form).attr('action'), $(form).serialize(), function(result) {
+        refresh();
+    }, function(e) {
+        show_loading(false);
+        show_error(e.message || e.error, e.data);
+    });
+    return false;
+}
+
+function showSortButton() {
+    $('#sort').show();
+}
+
+function moveUp(trid) {
+    var me = $('#tr-' + trid);
+    var x = me.prev();
+    if (x.length > 0) {
+        me.after(x);
+        showSortButton();
+    }
+}
+
+function moveDown(trid) {
+    var me = $('#tr-' + trid);
+    var x = me.next();
+    if (x.length > 0) {
+        me.before(x);
+        showSortButton();
+    }
+}
+</script>
+
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li class="active">All Navigations ({{ navigations.__len__() }})</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <div class="btn-toolbar" style="text-align:right;">
+        <a href="create_navigation" class="btn btn-primary"><i class="icon-plus icon-white"></i> Add New Navigation</a>
+    </div>
+</div>
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+    <form name="form-sort" method="post" action="/api/navigations/sort" onsubmit="return ajax_post(this)">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="15%">Name</th>
+                    <th width="55%">URL</th>
+                    <th width="15%">Creation Date</th>
+                    <th width="15%">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+{% for n in navigations %}
+                <tr id="tr-{{ n._id }}">
+                    <td><a href="{{ n.url }}" target="_blank">{{ n.name|e }}</a></td>
+                    <td><a href="{{ n.url }}" target="_blank">{{ n.url }}</a></td>
+                    <td>{{ n.creation_time|dt }}</td>
+                    <td>
+                        <a href="javascript:moveUp('{{ n._id }}')" data-toggle="tooltip" title="Move this category up" class="x-btn"><i class="icon-arrow-up"></i></a>
+                        <a href="javascript:moveDown('{{ n._id }}')" data-toggle="tooltip" title="Move this category down" class="x-btn"><i class="icon-arrow-down"></i></a>
+                        <a data-toggle="tooltip" title="Edit Navigation" href="edit_navigation?_id={{ n._id }}" class="x-btn"><i class="icon-edit"></i></a>
+                        <a data-toggle="tooltip" title="Delete Navigation" rel="{{ n._id }}" href="javascript:void(0)" class="x-btn x-btn-delete" prompt="{{ n.name|e }}"><i class="icon-trash"></i></a>
+                        <input type="hidden" name="_id" value="{{ n._id }}" />
+                    </td>
+                </tr>
+{% else %}
+                <tr><td colspan="5">No navigations found.</td></tr>
+{% endfor %}
+            </tbody>
+        </table>
+        <div>
+            <div id="sort" class="btn-toolbar hide" style="text-align:right;">
+                <button type="submit" class="btn btn-info"><i class="icon-list icon-white"></i> Save Orders</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock%}
