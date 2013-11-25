@@ -1,0 +1,76 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+All Users
+{% endblock %}
+
+{% block head %}
+<script>
+
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            var $btn = $(this);
+            var prompt = $btn.attr('prompt');
+            var rel = $btn.attr('rel');
+
+            show_confirm('Deletion Confirmation', 'Are you sure you want to delete "' + prompt + '"?', function(btn, fn_hide) {
+                $.postJSON('/api/settings/snstokens/' + rel + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message || err.error, err.data);
+                });
+            });
+        });
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li><a href="index">Settings</a> <span class="divider">/</span></li>
+        <li class="active">SNS Tokens ({{ snstokens.__len__() }})</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <div class="btn-toolbar" style="text-align:right;">
+        <a href="auth_from_weibo" class="btn"><i class="icon-share"></i> 新浪微博</a>
+    </div>
+</div>
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th width="10%">SNS</th>
+                <th width="15%">名称</th>
+                <th width="40%">Token</th>
+                <th width="15%">过期日期</th>
+                <th width="15%">创建日期</th>
+                <th width="5%">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+{% for t in snstokens %}
+            <tr class="{{ t.css }}">
+                <td>{{ t.auth_provider }}</td>
+                <td>{{ t.auth_name|e }}</td>
+                <td>{{ t.auth_token|e }}</td>
+                <td>{{ t.expires_time|dt }}</td>
+                <td>{{ t.creation_time|dt }}</td>
+                <td>
+                    <a data-toggle="tooltip" title="Delete this token" rel="{{ t._id }}" href="javascript:void(0)" class="x-btn x-btn-delete" prompt="{{ t.auth_name|e }}"><i class="icon-trash"></i></a>
+                </td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock%}
