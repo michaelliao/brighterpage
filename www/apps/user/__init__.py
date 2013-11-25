@@ -170,6 +170,10 @@ def make_session_cookie(signin_privider, uid, passwd, expires=None):
     Returns:
         base64 encoded cookie value as str.
     '''
+    if expires:
+        max_expires = time.time() + 1209600
+        if expires > max_expires:
+            expires = max_expires
     signin_privider = str(signin_privider)
     sid = str(uid)
     exp = str(int(expires)) if expires else str(int(time.time() + 86400))
