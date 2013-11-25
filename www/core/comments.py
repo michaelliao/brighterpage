@@ -6,6 +6,7 @@ __author__ = 'Michael Liao'
 import re
 
 from transwarp.web import ctx, post, notfound
+from transwarp import db
 
 from apis import api, check, APIValueError, APIPermissionError, ROLE_ADMIN
 from models import Comments
