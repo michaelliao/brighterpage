@@ -1,0 +1,80 @@
+{% extends 'templates/manage.html' %}
+
+{% block head %}
+<script>
+
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            $btn = $(this);
+            show_confirm('Deletion Confirm', 'Are you sure you want to delete the attachment "' + $btn.attr('prompt') + '"?', function(btn, fn_hide) {
+                $.postJSON('/api/attachments/' + $btn.attr('rel') + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message, err.data);
+                });
+            });
+        });
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block main %}
+
+<div class="span12">
+    <ul class="breadcrumb">
+  		<li class="active">All Attachments ({{ page.item_count }})</li>
+	</ul>
+</div>
+
+<!--
+<div class="span12">
+    <div class="btn-toolbar" style="text-align:right;">
+        <a href="create_attachment" class="btn btn-primary"><i class="icon-plus icon-white"></i> Add New Attachment</a>
+    </div>
+</div>
+-->
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+</div>
+
+<div class="span12">
+	<table class="table table-bordered">
+        <thead>
+            <tr>
+                <th width="20%">&nbsp;</th>
+                <th width="15%">Kind / Size</th>
+                <th width="40%">Name / Description</th>
+                <th width="15%">Creation Time</th>
+                <th width="10%">&nbsp;</th>
+            </tr>
+        </thead>
+    	<tbody>
+{% for a in attachments %}
+            <tr>
+                <td rowspan="2">
+                    <img src="/files/attachments/{{ a._id }}/s" />
+                </td>
+                <td>{{ a.kind }}</td>
+                <td>{{ a.name|e }}</td>
+                <td rowspan="2">{{ a.creation_time|dt }}</td>
+                <td rowspan="2">
+                    <a href="edit_attachment?_id={{ a._id }}" data-toggle="tooltip" title="Edit Attachment" class="x-btn"><i class="icon-edit"></i></a>
+                    <a rel="{{ a._id }}" href="javascript:void(0)" data-toggle="tooltip" title="Delete Attachment" class="x-btn x-btn-delete" prompt="{{ a.name|e }}"><i class="icon-trash"></i></a>
+                </td>
+            </tr>
+            <tr>
+                <td>{{ a.size|size }}</td>
+                <td>{{ a.description|e }}</td>
+            </tr>
+{% endfor %}
+        </tbody>
+    </table>
+    {{ pagination(page, '?page=') }}
+</div>
+
+{% endblock %}
