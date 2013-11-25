@@ -43,4 +43,5 @@ www/static/upload/*
 
 transwarp
 conf_prod.py
+dump*.sql
 
