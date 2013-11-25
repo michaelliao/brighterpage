@@ -30,6 +30,60 @@ def homepage():
     articles = Articles.select('where publish_time<? order by publish_time desc limit ?', time.time(), 10)
     return dict(articles=articles)
 
+@get('/feed')
+def rss():
+    ctx.response.content_type = 'application/rss+xml'
+    return _get_rss()
+
+def _get_rss():
+
+    def _rss_datetime(ts):
+        dt = datetime.fromtimestamp(ts, UTC_0)
+        return dt.strftime('%a, %d %b %Y %H:%M:%S GMT')
+
+    def _safe_str(s):
+        if isinstance(s, str):
+            return s
+        if isinstance(s, unicode):
+            return s.encode('utf-8')
+        return str(s)
+
+    limit = 20
+    name = u'廖雪峰的官方网站'
+    description = u''
+    copyright = 'copyright 2013'
+    domain = ctx.request.host
+    articles = _get_recent_articles(20)
+    rss_time = articles and articles[0].publish_time or time.time()
+    L = [
+        '<?xml version="1.0"?>\n<rss version="2.0"><channel><title><![CDATA[',
+        name,
+        ']]></title><link>http://',
+        domain,
+        '/</link><description><![CDATA[',
+        description,
+        ']]></description><lastBuildDate>',
+        _rss_datetime(rss_time),
+        '</lastBuildDate><generator>BrighterPage</generator><ttl>600</ttl>'
+    ]
+    for a in articles:
+        url = 'http://%s/article/%s' % (domain, a._id)
+        L.append('<item><title><![CDATA[')
+        L.append(a.name)
+        L.append(']]></title><link>')
+        L.append(url)
+        L.append('</link><guid>')
+        L.append(url)
+        L.append('</guid><author><![CDATA[')
+        L.append(a.user_name)
+        L.append(']]></author><pubDate>')
+        L.append(_rss_datetime(a.publish_time))
+        L.append('</pubDate><description><![CDATA[')
+        L.append(utils.cached_markdown2html(a))
+        L.append(']]></description></item>')
+    L.append(r'</channel></rss>')
+    return ''.join(map(_safe_str, L))
+
 ###############################################################################
 # Category management
 ###############################################################################

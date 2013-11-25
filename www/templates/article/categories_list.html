@@ -1,0 +1,124 @@
+{% extends 'templates/manage.html' %}
+
+{% block title %}
+All Categories
+{% endblock %}
+
+{% block head %}
+<script>
+
+function showSortButton() {
+    $('#sort').show();
+}
+
+function ajax_post(form) {
+    show_error(null);
+    show_loading(true);
+    $.postJSON($(form).attr('action'), $(form).serialize(), function(result) {
+        refresh();
+    }, function(e) {
+        show_loading(false);
+        show_error(e.message || e.error, e.data);
+    });
+    return false;
+}
+
+function moveUp(trid) {
+    var me = $('#tr-' + trid);
+    var x = me.prev();
+    if (x.length > 0) {
+        me.after(x);
+        showSortButton();
+    }
+}
+
+function moveDown(trid) {
+    var me = $('#tr-' + trid);
+    var x = me.next();
+    if (x.length > 0) {
+        me.before(x);
+        showSortButton();
+    }
+}
+
+$(function() {
+    $('a.x-btn-delete').each(function() {
+        $(this).click(function() {
+            $btn = $(this);
+            var prompt = $btn.attr('prompt');
+            var rel = $btn.attr('rel');
+
+            show_confirm('Confirm Deletion', 'Delete category "' + prompt + '"?', function(btn, fn_hide) {
+                $.postJSON('/api/categories/' + rel + '/delete', {}, function(result) {
+                    refresh();
+                }, function(err) {
+                    fn_hide();
+                    show_error(err.message || err.error, err.data);
+                });
+            });
+        });
+    });
+});
+
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="span12">
+    <ul class="breadcrumb">
+        <li><a href="/manage/article/">All Articles</a> <span class="divider">/</span></li>
+        <li class="active">All Categories</li>
+    </ul>
+</div>
+
+<div class="span12">
+    <div class="btn-toolbar" style="text-align:right;">
+        <a href="create_category" class="btn btn-primary"><i class="icon-plus icon-white"></i> Add New Category</a>
+    </div>
+</div>
+
+<div class="span12">
+    <div class="alert alert-error hide"></div>
+    <form name="form-sort" action="/api/categories/sort" onsubmit="return ajax_post(this)">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="30%">Name</th>
+                    <th width="40%">Description</th>
+                    <th width="15%">Creation Date</th>
+                    <th width="15%">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-categories">
+{% for c in categories %}
+                <tr id="tr-{{ c._id }}">
+                    <td class="name">
+                        <a href="/category/{{ c._id }}" target="_blank">{{ c.name|e }}</a>
+                    </td>
+                    <td>{{ c.description|e }}</td>
+                    <td>{{ c.creation_time|dt }}</td>
+                    <td>
+                        <a href="javascript:moveUp('{{ c._id }}')" data-toggle="tooltip" title="Move this category up" class="x-btn"><i class="icon-arrow-up"></i></a>
+                        <a href="javascript:moveDown('{{ c._id }}')" data-toggle="tooltip" title="Move this category down" class="x-btn"><i class="icon-arrow-down"></i></a>
+                        <a href="edit_category?_id={{ c._id }}" data-toggle="tooltip" title="Edit this category" class="x-btn"><i class="icon-edit"></i></a>
+                        <a data-toggle="tooltip" title="Delete this category" rel="{{ c._id }}" href="javascript:void(0)" class="x-btn x-btn-delete" prompt="{{ c.name|e }}"><i class="icon-trash"></i></a>
+                        <input type="hidden" name="_id" value="{{ c._id }}" />
+                    </td>
+                </tr>
+{% else %}
+                <tr>
+                    <td colspan="4">
+                        No categories defined. Please add a new category.
+                    </td>
+                </tr>
+{% endfor %}
+            </tbody>
+        </table>
+        <div>
+            <div id="sort" class="btn-toolbar hide" style="text-align:right;">
+                <button type="submit" class="btn btn-info"><i class="icon-list icon-white"></i> Save Orders</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
