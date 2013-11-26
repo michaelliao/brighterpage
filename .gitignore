@@ -40,7 +40,7 @@ Thumbs.db
 
 *.db
 www/static/upload/*
-
+www/core/tests/*
 transwarp
 conf_prod.py
 dump*.sql
