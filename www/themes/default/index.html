@@ -18,7 +18,7 @@
         </div>
         <div class="x-article-right">
             <div class="x-article-info">
-                <a href="/user/{{ a.user_id }}">{{ a.user_name|e }}</a> • <a href="/category/{{ a.category_id }}">{{ a.category_id }}</a> • <span class="x-smartdate" date="{{ a.publish_time }}">...</span> • {{ a.reads }}次阅读
+                <a href="/user/{{ a.user_id }}">{{ a.user_name|e }}</a> • <a href="/category/{{ a.category_id }}">{{ fn_get_category_name(a.category_id)|e }}</a> • <span class="x-smartdate" date="{{ a.publish_time }}">...</span> • {{ a.reads }}次阅读
             </div>
             <div class="x-article-summary">
                 <p>{{ a.summary }}</p>

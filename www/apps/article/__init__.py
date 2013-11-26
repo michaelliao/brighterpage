@@ -27,8 +27,11 @@ def get_navigation_menu():
 @get('/')
 @theme('index.html')
 def homepage():
+    categories = _get_categories()
+    cat_dict = dict(((c._id, c.name) for c in categories))
+    fn_get_category_name = lambda cid: cat_dict.get(cid, u'ERROR')
     articles = Articles.select('where publish_time<? order by publish_time desc limit ?', time.time(), 10)
-    return dict(articles=articles)
+    return dict(articles=articles, fn_get_category_name=fn_get_category_name)
 
 @get('/feed')
 def rss():
