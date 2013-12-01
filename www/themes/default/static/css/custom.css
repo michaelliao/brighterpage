@@ -248,6 +248,10 @@ div.x-wiki-tree ul li.x-active > a {
   color: #d14836;
   font-weight: bold;
 }
+div.x-wiki-info {
+  color: #999;
+  margin: 0 0 10px 0;
+}
 div.x-wiki-content {
   margin: 10px 0;
 }
