@@ -1,0 +1,1 @@
+../../sinaweibopy/snspy.py
