@@ -11,7 +11,7 @@ from transwarp.web import get, post, ctx, view, seeother, notfound, Dict
 from transwarp import db
 
 from core.apis import api, check, theme, assert_not_empty, APIValueError
-from core import texts, comments, uploaders
+from core import texts, comments, uploaders, counters
 
 from models import Wikis, WikiPages
 
@@ -30,6 +30,7 @@ def web_wiki(wid):
     wiki = _get_wiki(wid)
     tree = _get_wikipages(wiki)
     content = texts.md2html(texts.get(wiki.content_id))
+    wiki.reads = counters.incr(wid)
     return dict(wiki=wiki, page=None, tree=tree, name=wiki.name, content=content, comments=comments.get_comments(wid))
 
 @get('/wikipage/<pid>')
@@ -48,6 +49,7 @@ def web_wikipage(wid, pid):
     wiki = _get_wiki(wid)
     tree = _get_wikipages(wiki)
     content = texts.md2html(texts.get(page.content_id))
+    page.reads = counters.incr(pid)
     return dict(wiki=wiki, page=page, tree=tree, name=page.name, content=content, comments=comments.get_comments(pid))
 
 # api

@@ -13,7 +13,7 @@ from transwarp.web import view, get, post, ctx, notfound, seeother
 from transwarp import db
 
 from core.apis import api, theme, check, page_select, assert_not_empty, time2timestamp, APIValueError
-from core import uploaders, texts, comments
+from core import uploaders, texts, comments, counters
 
 from models import Articles, Categories
 
@@ -31,6 +31,9 @@ def homepage():
     cat_dict = dict(((c._id, c.name) for c in categories))
     fn_get_category_name = lambda cid: cat_dict.get(cid, u'ERROR')
     articles = Articles.select('where publish_time<? order by publish_time desc limit ?', time.time(), 10)
+    reads = counters.counts((a._id for a in articles))
+    for a, r in zip(articles, reads):
+        a.reads = r
     return dict(articles=articles, fn_get_category_name=fn_get_category_name)
 
 @get('/feed')
@@ -98,6 +101,9 @@ def web_category(cid):
     if category is None:
         raise notfound()
     page, articles = page_select(Articles, 'where category_id=? and publish_time<?', 'where category_id=? and publish_time<? order by publish_time desc', cid, time.time())
+    reads = counters.counts((a._id for a in articles))
+    for a, r in zip(articles, reads):
+        a.reads = r
     return dict(category=category, page=page, articles=articles)
 
 def _clear_categories_cache():
@@ -222,6 +228,7 @@ def web_get_article(aid):
     article = Articles.get_by_id(aid)
     if article is None or article.draft:
         raise notfound
+    article.reads = counters.incr(aid)
     article.content = texts.md2html(texts.get(article.content_id))
     category = Categories.get_by_id(article.category_id)
     return dict(article=article, category=category, comments=comments.get_comments(aid))
