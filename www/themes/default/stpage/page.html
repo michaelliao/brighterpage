@@ -6,6 +6,15 @@
 
 {% block title %}{{ page.name|e }}{% endblock %}
 
+{% block beforehead %}
+    <script>
+    $(function() {
+        $('.x-page-content a[href^="http://"]').attr('target', '_blank');
+        $('.x-page-content a[href^="https://"]').attr('target', '_blank');
+    });
+    </script>
+{% endblock %}
+
 {% block container %}
 
 <div class="x-page">
