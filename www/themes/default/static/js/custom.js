@@ -52,10 +52,37 @@ $(function() {
     var input_search = $('input.search-query');
     var old_width = input_search.css('width');
     input_search.bind('focusin', function() {
-        input_search.animate({'width': '180px'}, 500);
+        input_search.animate({'width': '160px'}, 500);
     }).bind('focusout', function() {
         input_search.animate({'width': old_width}, 500);
     });
+
+    // smart video:
+    var bSupportVideo = !!document.createElement('video').canPlayType;
+    if (bSupportVideo) {
+        var v = document.createElement('video');
+        bSupportVideo = v.canPlayType('video/mp4')!='';
+    }
+    $('div[data-type=video]').each(function() {
+        var d = $(this);
+        d.addClass('x-video');
+        if (! bSupportVideo) {
+            d.html('<div style="padding:20px 10px;">您的浏览器不支持播放该MP4视频</div>');
+        }
+        else {
+            var src = d.attr('data-src');
+            var w = d.attr('data-width');
+            var h = d.attr('data-height');
+            d.addClass('x-video-active');
+            d.html('<div class="x-video-button"><div class="x-video-play"></div></div>');
+            var s = '<video width="' + w + '" height="' + h + '" controls="controls" preload="none" style="border:solid 1px #ccc"><source src="' + src + '" /></video>'
+            d.click(function() {
+                d.css('display', 'none');
+                d.after(s);
+            });
+        }
+    });
+
     // END
 });
 

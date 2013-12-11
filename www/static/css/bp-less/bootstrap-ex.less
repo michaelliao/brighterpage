@@ -5,6 +5,47 @@
 @import "variables.less"; // Modify this for custom colors, font-sizes, etc
 @import "mixins.less";
 
+div.x-video {
+  width: 160px;
+  height: 90px;
+  background-color: lighten(@gray, 50%);
+  position: relative;
+
+  div.x-video-button {
+    position: absolute;
+    left: 55px;
+    top: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 25px;
+    border: 4px solid lighten(@gray, 25%);
+
+    div.x-video-play {
+      width: 0;
+      height: 0;
+      position: absolute;
+      left: 13px;
+      top: 12px;
+      border-left: 20px solid lighten(@gray, 25%);
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-right: none;
+    }
+  }
+}
+
+div.x-video-active {
+  cursor: pointer;
+  &:hover {
+    background-color: lighten(@gray, 30%);
+    div.x-video-button {
+      border-color: @white;
+      div.x-video-play {
+        border-left-color: @white;
+      }
+    }
+  }
+}
 
 i.loading {
   background-image: url("../img/loading.gif") !important;
