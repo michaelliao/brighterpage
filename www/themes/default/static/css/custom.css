@@ -59,7 +59,7 @@ img.x-user-image-small {
   border-left: 1px solid #ccc;
   overflow: hidden;
 }
-.x-sidebar-section h4 {
+.x-sidebar-section > h4 {
   border-bottom: 1px solid #ccc;
 }
 .x-article {
