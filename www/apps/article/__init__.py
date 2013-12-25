@@ -8,9 +8,11 @@ article app.
 '''
 
 import time
+from datetime import datetime
 
-from transwarp.web import view, get, post, ctx, notfound, seeother
+from transwarp.web import view, get, post, ctx, notfound, seeother, UTC_0
 from transwarp import db
+from transwarp import cache
 
 from core.apis import api, theme, check, page_select, assert_not_empty, time2timestamp, APIValueError
 from core import uploaders, texts, comments, counters
@@ -36,10 +38,18 @@ def homepage():
         a.reads = r
     return dict(articles=articles, fn_get_category_name=fn_get_category_name)
 
+_FEED_CACHE_KEY = 'bp_rss_feed'
+_FEED_CACHE_EXPIRES = 3600
+
 @get('/feed')
 def rss():
     ctx.response.content_type = 'application/rss+xml'
-    return _get_rss()
+    ctx.response.set_header('Cache-Control', 'max-age: 3600')
+    r = cache.client.get(_FEED_CACHE_KEY)
+    if r is None:
+        r = _get_rss()
+        cache.client.set(_FEED_CACHE_KEY, r, _FEED_CACHE_EXPIRES)
+    return r
 
 def _get_rss():
 
@@ -59,7 +69,10 @@ def _get_rss():
     description = u''
     copyright = 'copyright 2013'
     domain = ctx.request.host
-    articles = _get_recent_articles(20)
+    articles = articles = Articles.select('where publish_time<? order by publish_time desc limit ?', time.time(), 50)
+    for a in articles:
+        a.content = texts.md2html(texts.get(a.content_id))
+
     rss_time = articles and articles[0].publish_time or time.time()
     L = [
         '<?xml version="1.0"?>\n<rss version="2.0"><channel><title><![CDATA[',
@@ -70,7 +83,7 @@ def _get_rss():
         description,
         ']]></description><lastBuildDate>',
         _rss_datetime(rss_time),
-        '</lastBuildDate><generator>BrighterPage</generator><ttl>600</ttl>'
+        '</lastBuildDate><generator>BrighterPage</generator><ttl>3600</ttl>'
     ]
     for a in articles:
         url = 'http://%s/article/%s' % (domain, a._id)
@@ -85,7 +98,7 @@ def _get_rss():
         L.append(']]></author><pubDate>')
         L.append(_rss_datetime(a.publish_time))
         L.append('</pubDate><description><![CDATA[')
-        L.append(utils.cached_markdown2html(a))
+        L.append(texts.md2html(texts.get(a.content_id)))
         L.append(']]></description></item>')
     L.append(r'</channel></rss>')
     return ''.join(map(_safe_str, L))
