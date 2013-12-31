@@ -142,7 +142,6 @@ function auth_from(provider) {
 }
 
 function onauthcallback(u) {
-    console.log(u);
     $('span.x-user-name').text(u.name);
     $('img.x-user-image').attr('src', u.image_url);
     $('.x-auth-signed').show();
