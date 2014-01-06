@@ -15,13 +15,26 @@
     <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
     <script>
 $(function() {
+    var prev = null;
+    var next = null;
     //{% if page %}
-    $('#{{ page._id }}').prepend('<i class="icon-chevron-right" style="margin:0 2px 0 -16px;"></i>'); //.addClass('x-active');
+    var sel = $('#{{ page._id }}');
+    sel.prepend('<i class="icon-chevron-right" style="margin:0 2px 0 -16px;"></i>');
+    prev = find_prev(sel);
+    next = find_next(sel);
     //{% else %}
-    $('#{{ wiki._id }}').addClass('x-active');
+    $('#{{ wiki._id }}').addClass('x-active').addClass('x-active-wiki');
+    next = $('.x-wiki-tree').find('li:first a:first');
     //{% endif %}
     $('.x-wiki-content a[href^="http://"]').attr('target', '_blank');
     $('.x-wiki-content a[href^="https://"]').attr('target', '_blank');
+    // show prev & next:
+    if (prev) {
+        $('.x-wiki-prev').html('<i class="icon-chevron-left"></i> 上一篇：<a href="' + prev.attr('href') + '">' + prev.text() + '</a>');
+    }
+    if (next) {
+        $('.x-wiki-next').html('下一篇：<a href="' + next.attr('href') + '">' + next.text() + '</a> <i class="icon-chevron-right"></i>');
+    }
 });
     </script>
 {% endblock %}
@@ -63,6 +76,11 @@ $(function() {
                     <hr style="border-top-color:#ccc" />
                     <div class="x-wiki-content">{{ content }}</div>
 
+                    <hr style="border-top-color:#ccc" />
+                    <div class="row">
+                        <div class="x-wiki-prev"></div>
+                        <div class="x-wiki-next"></div>
+                    </div>
                     <hr style="border-top-color:#ccc" />
 
                     <h4>喜欢这篇文章？</h4>
