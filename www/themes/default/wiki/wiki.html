@@ -29,12 +29,17 @@ $(function() {
     $('.x-wiki-content a[href^="http://"]').attr('target', '_blank');
     $('.x-wiki-content a[href^="https://"]').attr('target', '_blank');
     // show prev & next:
+    var ss = '';
     if (prev) {
-        $('.x-wiki-prev').html('<i class="icon-chevron-left"></i> 上一篇：<a href="' + prev.attr('href') + '">' + prev.text() + '</a>');
+        ss = ss + '<i class="icon-chevron-left"></i> 上一篇：<a href="' + prev.attr('href') + '">' + prev.text() + '</a>';
+    }
+    if (prev && next) {
+        ss = ss + '&nbsp;&nbsp;&nbsp;···&nbsp;&nbsp;&nbsp;';
     }
     if (next) {
-        $('.x-wiki-next').html('下一篇：<a href="' + next.attr('href') + '">' + next.text() + '</a> <i class="icon-chevron-right"></i>');
+        ss = ss + '下一篇：<a href="' + next.attr('href') + '">' + next.text() + '</a> <i class="icon-chevron-right"></i>';
     }
+    $('.x-wiki-prev-next').html(ss);
 });
     </script>
 {% endblock %}
@@ -77,10 +82,7 @@ $(function() {
                     <div class="x-wiki-content">{{ content }}</div>
 
                     <hr style="border-top-color:#ccc" />
-                    <div class="row">
-                        <div class="x-wiki-prev"></div>
-                        <div class="x-wiki-next"></div>
-                    </div>
+                    <div class="x-wiki-prev-next">&nbsp;</div>
                     <hr style="border-top-color:#ccc" />
 
                     <h4>喜欢这篇文章？</h4>
