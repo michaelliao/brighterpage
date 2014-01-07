@@ -241,9 +241,6 @@ div.x-wiki-tree ul li {
   list-style-type: none;
   margin: 6px 0 6px 0;
 }
-div.x-wiki-tree ul li.x-active {
-  list-style-type: disc;
-}
 div.x-wiki-tree ul li.x-active > a {
   color: #d14836;
   font-weight: bold;
