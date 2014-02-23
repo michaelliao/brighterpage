@@ -85,13 +85,22 @@ $(function() {
                     <div class="x-wiki-prev-next">&nbsp;</div>
                     <hr style="border-top-color:#ccc" />
 
+                    <h4>您的支持是作者写作最大的动力！</h4>
+                    <div>
+                        <p>如果您喜欢这个教程，读后觉得收获很大，不妨小额赞助我一杯咖啡，让我有动力继续写出高质量的教程。</p>
+                        <p>如果您恰好有<span style="font-size:1.5em;font-weight:bold;">支付宝</span>，请狠狠地点击下面的按钮：</p>
+                        <p><a href="/page/donate" target="_blank" class="btn btn-success btn-large">请我喝咖啡</a></p>
+                    </div>
+
+                    <hr style="border-top-color:#ccc" />
+
                     <h4>喜欢这篇文章？</h4>
-                    <div style="height:66px">
+                    <div style="height:76px">
                         <wb:like appkey="2f89Ml"></wb:like>
                     </div>
 
                     <h4>分享给朋友</h4>
-                    <div style="height:66px">
+                    <div style="height:76px">
                         <wb:share-button appkey="2f89Ml" addition="full" type="button" default_text="{{ wiki.name|e }}：{% if page %}{{ name|e }}{% else %}{{ wiki.description|e }}{% endif %}" ralateUid="1658384301" pic="http://{{ __request__.host }}/files/attachments/{{ wiki.cover_id }}/0" picture_search="false"></wb:share-button>
                     </div>
 
