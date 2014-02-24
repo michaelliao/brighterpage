@@ -44,4 +44,5 @@ www/core/tests/*
 transwarp
 conf_prod.py
 dump*.sql
+backup
 
